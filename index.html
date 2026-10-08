@@ -64,7 +64,7 @@
     .mobile-nav{display:none}
     @media(max-width:1180px){.kpi-grid{grid-template-columns:repeat(4,1fr)}.kpi{border-radius:10px!important}.kpi:nth-child(n+5){display:none}.span-8,.span-7{grid-column:span 7}.span-4,.span-5{grid-column:span 5}.live-grid{grid-template-columns:1fr 1fr}.report-list{grid-template-columns:1fr 1fr}.role-grid{grid-template-columns:1fr 1fr}}
     @media(max-width:800px){.app{display:block}.sidebar{display:none}.main{display:block}.topbar{height:60px;padding:0 16px}.crumb h1{font-size:16px}.period,.top-actions .ghost{display:none}.icon-btn{display:block;padding:7px 10px}.content{padding:17px 14px 90px}.hero-row{align-items:flex-start;flex-direction:column;margin-bottom:16px}.hero-row h2{font-size:22px}.filterbar{width:100%}.select,.search{flex:1;min-width:100px}.kpi-grid{grid-template-columns:1fr 1fr;gap:8px}.kpi:nth-child(n+5){display:block}.kpi{min-height:102px;padding:13px}.kpi strong{font-size:20px}.grid-12{display:block}.card{margin-bottom:12px;box-shadow:none}.summary-strip{grid-template-columns:1fr 1fr}.summary-strip>div:nth-child(3),.summary-strip>div:nth-child(4){border-top:1px solid var(--line)}.live-grid,.report-list,.role-grid{grid-template-columns:1fr}.table-wrap{overflow:visible}.table thead{display:none}.table,.table tbody,.table tr,.table td{display:block;width:100%}.table tr{padding:10px 0;border-bottom:1px solid var(--line)}.table td{border:0;padding:4px 12px;display:flex;justify-content:space-between;white-space:normal}.table td:before{content:attr(data-label);color:var(--muted);margin-right:16px}.channel{grid-template-columns:75px 1fr 65px}.donut-wrap{grid-template-columns:145px 1fr}.donut{width:132px;height:132px}.donut:after{width:76px;height:76px}.funnel{display:grid;grid-template-columns:1fr 1fr;gap:6px}.f-step,.f-step:first-child{clip-path:none;border-radius:8px;min-width:0}.mobile-nav{position:fixed;display:grid;grid-template-columns:repeat(5,1fr);left:0;right:0;bottom:0;padding:7px 8px calc(7px + env(safe-area-inset-bottom));background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(15px);border-top:1px solid var(--line);z-index:30}.mobile-nav button{border:0;background:transparent;color:var(--muted);font-size:10px;display:grid;place-items:center;gap:3px;padding:4px}.mobile-nav button.active{color:var(--green);font-weight:600}.mobile-nav svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}.modal{padding:10px}.modal-panel{max-height:88vh}.toast{left:14px;right:14px;bottom:84px;text-align:center}}
-  </style>
+  .kpi-label .info{cursor:pointer;color:var(--muted)}.kpi-label .info:hover{color:var(--green)}.metric-tip{position:fixed;z-index:99;background:var(--surface);border:1px solid var(--line-strong);border-radius:10px;box-shadow:var(--shadow);padding:12px 14px;font-size:12px;line-height:1.6;color:var(--ink)}.metric-tip b{font-size:13px}.metric-tip p{margin:6px 0 0;color:var(--muted)}.metric-tip .formula{color:var(--ink);background:var(--surface-2);border-radius:6px;padding:6px 8px;margin-top:8px}</style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute"><defs>
@@ -110,7 +110,30 @@
   nav.innerHTML=navItems.map(x=>`<button data-view="${x[0]}"><svg><use href="#${x[2]}"></use></svg>${x[1]}</button>`).join('');
   mobile.innerHTML=[navItems[0],navItems[1],navItems[2],navItems[7],navItems[8]].map(x=>`<button data-view="${x[0]}"><svg><use href="#${x[2]}"></use></svg>${x[1].replace('管理','')}</button>`).join('');
   const lineChart=`<div class="chart"><svg viewBox="0 0 700 230" preserveAspectRatio="none"><defs><linearGradient id="areaFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--green)" stop-opacity=".23"/><stop offset="1" stop-color="var(--green)" stop-opacity="0"/></linearGradient></defs>${[25,75,125,175].map(y=>`<line class="gridline" x1="44" y1="${y}" x2="688" y2="${y}"/>`).join('')}<path class="area" d="M44 180 C92 165 105 133 144 147 S208 114 250 127 S324 82 365 98 S430 118 476 82 S554 50 598 68 S654 37 688 48 L688 205 L44 205Z"/><path class="line" d="M44 180 C92 165 105 133 144 147 S208 114 250 127 S324 82 365 98 S430 118 476 82 S554 50 598 68 S654 37 688 48"/><path class="line2" d="M44 192 C90 181 104 161 144 169 S210 148 250 151 S323 120 365 131 S430 134 476 110 S554 91 598 98 S655 72 688 81"/>${[['09/01',44],['09/05',144],['09/10',250],['09/15',365],['09/20',476],['09/25',598],['09/30',678]].map(x=>`<text class="axis" x="${x[1]}" y="224">${x[0]}</text>`).join('')}</svg></div>`;
-  const kpis=(items)=>`<div class="kpi-grid">${items.map((x,i)=>`<article class="kpi"><div class="kpi-label"><span>${x[0]}</span><span>ⓘ</span></div><strong>${x[1]}</strong><div class="delta ${x[2][0]==='+'?'up':'down'}">${x[2]} <small>环比</small></div><svg class="spark" viewBox="0 0 74 34"><path d="M0 ${27-i%4*2} C15 ${20+i*2},24 ${30-i},36 ${18-i} S58 ${15+i},74 ${4+i*3}"/></svg></article>`).join('')}</div>`;
+  const METRIC_DEFS={
+'GMV':['统计周期内全部支付订单的商品成交总额（实付金额），按支付时间统计，T+1更新。','GMV = Σ订单实付金额'],
+'支付订单':['统计周期内完成支付的订单数量（子订单口径），按支付时间统计。','支付订单数 = count(已支付订单)'],
+'访客数':['统计周期内访问店铺、直播间的去重用户数（UV）。','访客数 = 按用户ID去重计数'],
+'成交转化率':['成交用户数占访客数的比例，反映流量变现效率。','成交转化率 = 成交用户数 ÷ 访客数 ×100%'],
+'客单价':['平均每笔支付订单的成交金额。','客单价 = GMV ÷ 支付订单数'],
+'退款率':['退款金额占GMV的比重，含退货退款与仅退款。','退款率 = 退款金额 ÷ GMV ×100%'],
+'店铺体验分':['抖音官方店铺体验分，由商品体验、物流体验、服务体验综合计算，5分制，T+1同步。','平台官方评分，低于4.3自动预警'],
+'职人总数':['已绑定门店且开通分销权限的职人账号总数。','职人总数 = count(绑定门店且分销权限=开通)'],
+'活跃职人':['近30天内有推广订单或内容发布的职人。','活跃职人 = count(近30天有订单或内容)'],
+'职人 GMV':['通过职人推广链接/二维码带来的成交总额。','职人GMV = Σ(职人推广订单实付金额)'],
+'推广订单':['通过职人推广产生的支付订单数量，按推广ID归因到职人。','推广订单数 = count(推广ID非空的已支付订单)'],
+'内容发布':['职人账号发布的短视频数与直播场次之和。','内容发布 = 短视频数 + 直播场次'],
+'待结佣金':['已成交、尚未到结算打款周期的职人佣金。','待结佣金 = Σ(订单佣金 × 未结算)'],
+'人均产能':['平均每位活跃职人带来的GMV。','人均产能 = 职人GMV ÷ 活跃职人数'],
+'销售收入':['平台账单周期内实收商品销售收入（已扣除退款）。','销售收入 = Σ订单实付金额 − Σ退款金额'],
+'平台补贴':['抖音平台发放的补贴，含平台券、新人补贴、大促补贴。','按资金账单补贴明细汇总'],
+'退款支出':['统计周期内退还给用户的总金额。','退款支出 = Σ退款单金额'],
+'平台服务费':['抖音按类目收取的技术服务费，通信类目约2%–5%。','平台服务费 = Σ(订单实付金额 × 类目费率)'],
+'佣金支出':['结算给达人、职人的佣金总额，已扣减退款扣回。','佣金支出 = Σ实付佣金 − Σ退款扣回'],
+'待结算资金':['平台账单中已产生、尚未提现到账的在途资金。','待结算资金 = 可提现金额 + 冻结中金额'],
+'经营利润':['扣除全部成本费用后的经营利润。','经营利润 = 销售收入＋平台补贴 − 退款支出 − 平台服务费 − 佣金支出 − 商品成本 − 投流 − 物流人工']
+};
+const kpis=(items)=>`<div class="kpi-grid">${items.map((x,i)=>`<article class="kpi"><div class="kpi-label"><span>${x[0]}</span><span class="info" data-m="${x[0]}" title="点击查看口径说明">ⓘ</span></div><strong>${x[1]}</strong><div class="delta ${x[2][0]==='+'?'up':'down'}">${x[2]} <small>环比</small></div><svg class="spark" viewBox="0 0 74 34"><path d="M0 ${27-i%4*2} C15 ${20+i*2},24 ${30-i},36 ${18-i} S58 ${15+i},74 ${4+i*3}"/></svg></article>`).join('')}</div>`;
   const head=(name,desc,filters=true)=>`<div class="hero-row"><div><h2>${name}</h2><p>${desc}</p></div>${filters?`<div class="filterbar"><select class="select"><option>全国</option><option>河北省</option><option>山东省</option><option>河南省</option></select><select class="select"><option>全部渠道</option><option>店铺自播</option><option>职人分销</option><option>达人分销</option></select></div>`:''}</div>`;
   const tableCard=(title,heads,rows,span='span-8')=>`<section class="card ${span}"><div class="card-head"><h3>${title}</h3><button class="text-action">查看全部 →</button></div><div class="table-wrap"><table class="table"><thead><tr>${heads.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((c,i)=>`<td data-label="${heads[i]}">${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div></section>`;
   const alertList=`<div class="alert-list"><div class="alert-item"><div class="alert-icon">高</div><div><h4>GMV 日环比下降 34.7%</h4><p>邯郸电信人民路店 · 已持续 2 天</p></div><time>10:32</time></div><div class="alert-item"><div class="alert-icon" style="background:var(--amber-soft);color:var(--amber)">中</div><div><h4>号卡库存低于安全线</h4><p>12 家门店 · 29元星卡套餐</p></div><time>09:46</time></div><div class="alert-item"><div class="alert-icon">高</div><div><h4>直播在线人数骤降 42%</h4><p>河北移动官方旗舰店直播间</p></div><time>09:31</time></div><div class="alert-item"><div class="alert-icon" style="background:var(--blue-soft);color:var(--blue)">财</div><div><h4>平台账单存在 7 笔差异</h4><p>差异金额合计 ¥12,840.60</p></div><time>08:15</time></div></div>`;
@@ -144,7 +167,10 @@ function profile(){return `<div class="view">${head('用户数据画像','整合
   document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>setView(b.dataset.view));
   document.querySelectorAll('.period button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.period button').forEach(x=>x.classList.remove('active'));b.classList.add('active');showToast('已切换至“'+b.textContent+'”口径')});
   $('#exportBtn').onclick=downloadCSV;$('#moreBtn').onclick=downloadCSV;$('#reportBtn').onclick=()=>$('#modal').classList.add('open');$('#closeModal').onclick=()=>$('#modal').classList.remove('open');$('#modal').onclick=e=>{if(e.target.id==='modal')e.currentTarget.classList.remove('open')};$('#downloadDaily').onclick=()=>{downloadCSV();$('#modal').classList.remove('open')};
-  setView('overview');
+  function showMetricTip(el){const d=METRIC_DEFS[el.dataset.m];if(!d)return;const old=$('#metricTip');if(old&&old._for===el){old.remove();return}if(old)old.remove();const r=el.getBoundingClientRect(),w=Math.min(300,window.innerWidth-24);let left=Math.max(12,Math.min(r.left+r.width/2-w/2,window.innerWidth-w-12));const tip=document.createElement('div');tip.id='metricTip';tip.className='metric-tip';tip._for=el;tip.innerHTML=`<b>${el.dataset.m}</b><p>${d[0]}</p><p class="formula">计算：${d[1]}</p>`;document.body.appendChild(tip);tip.style.width=w+'px';let top=r.bottom+8;if(top+tip.offsetHeight>window.innerHeight-12)top=Math.max(12,r.top-tip.offsetHeight-8);tip.style.left=left+'px';tip.style.top=top+'px'}
+document.addEventListener('click',e=>{const info=e.target.closest?e.target.closest('.info'):null;const tip=$('#metricTip');if(info){e.stopPropagation();showMetricTip(info)}else if(tip&&!(e.target.closest&&e.target.closest('#metricTip')))tip.remove()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){const t=$('#metricTip');if(t)t.remove()}});
+setView('overview');
 })();
 </script>
 </body>
